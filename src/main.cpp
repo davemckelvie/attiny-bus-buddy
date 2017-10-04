@@ -30,7 +30,7 @@
 #define DELAY_TIME_MS (500)
 
 // Pin port function
-//   1 PB5  (can't be used for DS18B20, why?)
+//   1 PB5  (can't be used for DS18B20)
 //   2 PB3  micronucleus
 //   3 PB4  micronucleus - DS18B20
 //   4      GND
@@ -38,9 +38,9 @@
 //   6 PB1  LED
 //   7 PB2  SCL
 //   8      VCC
-
+static uint8_t current_device = 0;
 static volatile uint8_t num_devices = 0;
-static volatile int8_t temperature = 0;
+static volatile uint8_t ds18b20_device_table[MAX_TEMP_SENSORS][2] = {0};
 
 /**
  * This is called for each read request we receive, never put more than one byte of data (with TinyWireS.send) to the
@@ -48,7 +48,19 @@ static volatile int8_t temperature = 0;
  */
 void requestEvent()
 {
-    TinyWireS.send(temperature);
+  static volatile uint8_t device_index = 0;
+  static volatile uint8_t buffer_index = 0;
+
+  if (num_devices > 0) {
+    TinyWireS.send(ds18b20_device_table[device_index][buffer_index++]);
+    if (buffer_index >= 2) {
+      buffer_index = 0;
+      device_index++;
+      if (device_index >= num_devices - 1) {
+        device_index = 0;
+      }
+    }
+  }
 }
 
 void setup() {
@@ -68,7 +80,11 @@ void loop()
   }
   if (num_devices > 0) {
     digitalWrite(LED_PIN, LOW);
+    if (current_device >= num_devices) {
+      current_device = 0;
+    }
+    ds18b20_read_temp_raw(current_device, ds18b20_device_table[current_device]);
+    current_device = 0;
     tws_delay(DELAY_TIME_MS);
-    temperature = ds18b20_read_temp(0);
   }
 }

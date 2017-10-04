@@ -54,6 +54,7 @@ extern "C" {
 #endif
 uint8_t ds18b20_init(void);
 int8_t ds18b20_read_temp(uint8_t);
+uint8_t ds18b20_read_temp_raw(uint8_t, uint8_t *);
 uint8_t ds18b20_verify_crc(uint8_t);
 #ifdef __cplusplus
 }
