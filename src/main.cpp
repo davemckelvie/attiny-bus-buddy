@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- #include <Arduino.h>
+#include <Arduino.h>
 #include <string.h>
 #include <stdint.h>
 #include <util/delay.h>
@@ -40,7 +40,7 @@
 //   8      VCC
 static uint8_t current_device = 0;
 static volatile uint8_t num_devices = 0;
-static volatile uint8_t ds18b20_device_table[MAX_TEMP_SENSORS][2] = {0};
+static volatile uint8_t ds18b20_device_table[MAX_TEMP_SENSORS * RAW_DATA_SIZE] = {0};
 
 /**
  * This is called for each read request we receive, never put more than one byte of data (with TinyWireS.send) to the
@@ -48,18 +48,13 @@ static volatile uint8_t ds18b20_device_table[MAX_TEMP_SENSORS][2] = {0};
  */
 void requestEvent()
 {
-  static volatile uint8_t device_index = 0;
-  static volatile uint8_t buffer_index = 0;
+  static volatile uint8_t index = 0;
 
-  if (num_devices > 0) {
-    TinyWireS.send(ds18b20_device_table[device_index][buffer_index++]);
-    if (buffer_index >= 2) {
-      buffer_index = 0;
-      device_index++;
-      if (device_index >= num_devices - 1) {
-        device_index = 0;
-      }
-    }
+  if (num_devices == 0) return;
+
+  TinyWireS.send(ds18b20_device_table[index++]);
+  if (index >= (num_devices * RAW_DATA_SIZE)) {
+    index = 0;
   }
 }
 
@@ -75,16 +70,16 @@ void loop()
   TinyWireS_stop_check();
   digitalWrite(LED_PIN, HIGH);
   tws_delay(DELAY_TIME_MS);
-  if (num_devices == 0) {
-    num_devices = ds18b20_init();
-  }
+
   if (num_devices > 0) {
     digitalWrite(LED_PIN, LOW);
     if (current_device >= num_devices) {
       current_device = 0;
     }
-    ds18b20_read_temp_raw(current_device, ds18b20_device_table[current_device]);
-    current_device = 0;
+    ds18b20_read_temp_raw(current_device, ds18b20_device_table + (current_device * RAW_DATA_SIZE));
+    current_device++;
     tws_delay(DELAY_TIME_MS);
+  } else {
+    num_devices = ds18b20_init();
   }
 }

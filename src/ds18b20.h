@@ -18,6 +18,7 @@
 #define __DS18B20_H__
 
 #define MAX_TEMP_SENSORS               3
+#define RAW_DATA_SIZE                  2
 
 //DS18x20 specific commands
 #define DS_COMMAND_CONVERT             0x44

@@ -1,0 +1,6 @@
+{
+    "terminal.integrated.env.linux": {
+        "PATH": "/home/dave/.platformio/penv/bin:/home/dave/.platformio/penv:/home/dave/bin:/opt/OpenPrinting-Gutenprint/sbin:/opt/OpenPrinting-Gutenprint/bin:/home/dave/bin:/opt/OpenPrinting-Gutenprint/sbin:/opt/OpenPrinting-Gutenprint/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/home/dave/Android/android-sdk-linux/platform-tools:/home/dave/Android/android-sdk-linux/tools:/home/dave/Android/android-ndk-r13b:/home/dave/opt/gcc-arm-none-eabi-6-2017-q1-update/bin:/home/dave/flutter/bin:/home/dave/Android/android-sdk-linux/platform-tools:/home/dave/Android/android-sdk-linux/tools:/home/dave/Android/android-ndk-r13b:/home/dave/opt/gcc-arm-none-eabi-6-2017-q1-update/bin:/home/dave/flutter/bin",
+        "PLATFORMIO_CALLER": "vscode"
+    }
+}
